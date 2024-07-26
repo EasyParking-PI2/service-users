@@ -1,24 +1,22 @@
 import RethinDBConnection from "../infra/RethinkDBConnection";
-import rethinkdb, {ReqlError, WriteResult} from 'rethinkdb';
+import rethinkdb, { ReqlError, WriteResult } from 'rethinkdb';
 import { User } from "../types/User.type";
 
 export default class UserModel {
   table: string;
+  database = "easy-parking";
 
   constructor() {
     this.table = 'users';
   }
 
-  async create(user:User) {
-    try{
+  async create(user: User): Promise<WriteResult> {
+    try {
       const connection = RethinDBConnection.connect();
-      if(!connection) throw new Error('Connection not established');
-  
-      rethinkdb.db('easy-parking1').table('users').insert(user).run(connection, (err:ReqlError, result:WriteResult)=>{
-        if (err) throw err;
-        console.log(result);
-      });
-    }catch(err){
+      if (!connection) throw new Error('Connection not established');
+      return await rethinkdb.db(this.database).table('users').insert(user).run(connection);
+      
+    } catch (err) {
       throw err;
     }
   }

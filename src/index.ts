@@ -3,7 +3,6 @@ import cors from 'cors';
 import errorHandler from './middleware/errorHandler';
 import RethinDBConnection from "./infra/RethinkDBConnection";
 
-
 const app = express();
 const port = process.env.PORT || 3000;
 
