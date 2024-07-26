@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  web:
+    build: ./
+    links:
+      - rethinkdb:rethinkdb
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - rethinkdb
+
+  rethinkdb:
+    image: rethinkdb
+    ports:
+      - "8080:8080"
+      - "28015:28015"
+      - "29015:29015"
+    volumes:
+      - rethinkdb_data:/data
+
+volumes:
+  rethinkdb_data:
