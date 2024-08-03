@@ -1,7 +1,12 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler';
 import RethinDBConnection from "./infra/RethinkDBConnection";
+import dotenv from 'dotenv';
+import protect from './middleware/authMiddleware';
+import CustomRequest from './types/CustomRequest.type';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,6 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 RethinDBConnection.connect();
 
 app.use('/', require('./routes/user.route'));
+
+app.use('/protected', protect, async(req: Request, res:Response) =>{
+  const cReq = req as CustomRequest;
+  console.log(cReq.user);
+  
+  res.send('Protected route');
+})
 
 app.use(errorHandler);
 

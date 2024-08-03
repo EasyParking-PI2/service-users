@@ -1,9 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
 
 import { Request, Response } from "express";
-import { User } from "../types/User.type";
+import { Profile, User } from "../types/User.type";
 import UserModel from "../models/user.model";
 import bcrypt from "bcrypt";
+import { validateCPF, validateEmail, validatePhone } from "../validations/user.validation";
 
 /**
  * @desc Create a new user
@@ -11,16 +12,25 @@ import bcrypt from "bcrypt";
  * @access Public
  */
 const createUser = expressAsyncHandler(async (req: Request, res: Response) => {
-  const { login, password, name, email, cpf, phone, profile  } = req.body;
+  const { login, password, name, email, cpf, phone  } = req.body;
 
-  if (!login || !password || !name || !email || !cpf || !phone || !profile) {
+  if (!login || !password || !name || !validateEmail(email) || !validateCPF(cpf) || !validatePhone(phone)) {
+
+    console.log('login', login);
+    console.log('password', password);
+    console.log('name', name);
+    console.log('email', validateEmail(email));
+    console.log('cpf', validateCPF(cpf));
+    console.log('phone', validatePhone(phone));
+
+
     res.status(400);
     throw new Error("All fields are required");
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  const userModel = new UserModel();
 
+  const hashedPassword = await userModel.hashPassword(password);
   const user: User = {
     login,
     password: hashedPassword,
@@ -28,10 +38,9 @@ const createUser = expressAsyncHandler(async (req: Request, res: Response) => {
     email,
     cpf,
     phone,
-    profile,
+    profile: Profile.USER,
   }
 
-  const userModel = new UserModel();
   const createResponse = await userModel.create(user);
   
   res.status(201).json({
@@ -41,7 +50,7 @@ const createUser = expressAsyncHandler(async (req: Request, res: Response) => {
     email,
     cpf,
     phone,
-    profile
+    profile: Profile.USER
   });
 });
 
