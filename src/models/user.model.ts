@@ -91,6 +91,18 @@ export default class UserModel {
     }
   }
 
+  async deleteUser (id: string): Promise<WriteResult> {
+    try {
+      const connection = RethinDBConnection.connect();
+      if (!connection) throw new Error('Connection not established');
+
+      return await this.database.table('users').get(id).delete().run(connection);
+
+    } catch (err) {
+      throw err;
+    }
+  }
+
 
   /**
    * Compare two passwords using bcrypt
@@ -112,9 +124,4 @@ export default class UserModel {
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   }
-
-  // async delete(id) {
-  //   const result = await connection.table(this.table).get(id).delete().run();
-  //   return result;
-  // }
 }

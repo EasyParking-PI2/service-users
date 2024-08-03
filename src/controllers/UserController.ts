@@ -61,6 +61,11 @@ const createUser = expressAsyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @desc Update a user
+ * @route PUT /api/users
+ * @access Private
+ */
 const updateUser = expressAsyncHandler(async (req: Request, res: Response) => {
   const cReq = req as CustomRequest;
   const { name, email, cpf, phone, password } = req.body;
@@ -119,11 +124,51 @@ const updateUser = expressAsyncHandler(async (req: Request, res: Response) => {
     res.status(500);
     throw new Error("Error updating user");
   }
-
 });
 
+/**
+ * @desc Get a user
+ * @route GET /api/users
+ * @access Private
+ */
+const getUser = expressAsyncHandler(async (req: Request, res: Response) => {
+  const cReq = req as CustomRequest;
+
+  if (!cReq.user || !cReq.user.id) {
+    res.status(401);
+    throw new Error("Not authorized");
+  }
+
+  res.status(200).json(cReq.user);
+});
+
+/**
+ * @desc Delete a user
+ * @route DELETE /api/users
+ * @access Private
+ * @returns 204
+ */
+const deleteUser = expressAsyncHandler(async (req: Request, res: Response) => {
+  const cReq = req as CustomRequest;
+
+  if (!cReq.user || !cReq.user.id) {
+    res.status(401);
+    throw new Error("Not authorized");
+  }
+
+  const userModel = new UserModel();
+  try{
+    await userModel.deleteUser(cReq.user.id);
+    res.status(204).send();
+  }catch(err){
+    res.status(500);
+    throw new Error("Error deleting user");
+  }
+});
 
 export {
   createUser,
-  updateUser
+  updateUser,
+  getUser,
+  deleteUser
 };
