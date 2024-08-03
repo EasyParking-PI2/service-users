@@ -20,13 +20,6 @@ RethinDBConnection.connect();
 
 app.use('/', require('./routes/user.route'));
 
-app.use('/protected', protect, async(req: Request, res:Response) =>{
-  const cReq = req as CustomRequest;
-  console.log(cReq.user);
-  
-  res.send('Protected route');
-})
-
 app.use(errorHandler);
 
 app.listen(port, () => {
