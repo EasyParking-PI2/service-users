@@ -1,12 +1,13 @@
 import exporess from 'express';
-import UserModel from '../models/user.model';
-import { Profile } from '../types/User.type';
-import {createUser} from '../controllers/UserController';
+import {createUser, updateUser} from '../controllers/UserController';
 import { login } from '../controllers/AuthenticationController';
+import protect from '../middleware/authMiddleware';
 
 const router = exporess.Router();
 
 router.post('/api/users', createUser);
+router.put('/api/users', protect, updateUser);
+
 router.post('/api/auth/login', login);
 
 module.exports = router;

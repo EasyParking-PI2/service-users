@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import UserModel from "../models/user.model";
 import jwt from 'jsonwebtoken'
-import { User } from "../types/User.type";
-
 
 /**
  * @Route POST /api/auth/login

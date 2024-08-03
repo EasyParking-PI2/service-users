@@ -16,6 +16,7 @@ export default class UserModel {
    * Inset a user into the database
    * @param user 
    * @returns the user created
+   * @throws error if the connection is not established
    */
   async create(user: User): Promise<WriteResult> {
     try {
@@ -32,6 +33,7 @@ export default class UserModel {
    * Get a user by login
    * @param login 
    * @returns the user found or null
+   * @throws error if the connection is not established
    */
   async getByLogin(login: string): Promise<User | null> {
     try {
@@ -54,6 +56,7 @@ export default class UserModel {
    * Get a user by id
    * @param id 
    * @returns the user found or null
+   * @throws error if the connection is not established
    */
   async getById(id: string): Promise<User | null> {
     try {
@@ -62,6 +65,26 @@ export default class UserModel {
       const result = await this.database.table('users').get(id).run(connection);
 
       return result as User;
+
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Update a user
+   * @param id 
+   * @param user 
+   * @returns the user
+   * @throws error if the connection is not established
+   */
+  async update(id: string, user: User): Promise<WriteResult> {
+    try {
+      const connection = RethinDBConnection.connect();
+      if (!connection) throw new Error('Connection not established');
+
+
+      return await this.database.table('users').get(id).update(user).run(connection);
 
     } catch (err) {
       throw err;
@@ -89,16 +112,6 @@ export default class UserModel {
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   }
-
-  // async get(id) {
-  //   const result = await connection.table(this.table).get(id).run();
-  //   return result;
-  // }
-
-  // async update(id, user) {
-  //   const result = await connection.table(this.table).get(id).update(user).run();
-  //   return result;
-  // }
 
   // async delete(id) {
   //   const result = await connection.table(this.table).get(id).delete().run();
