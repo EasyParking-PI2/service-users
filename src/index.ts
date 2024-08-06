@@ -3,6 +3,7 @@ import cors from 'cors';
 import errorHandler from './middleware/errorHandler';
 import RethinDBConnection from "./infra/RethinkDBConnection";
 import dotenv from 'dotenv';
+import rethinkdb from 'rethinkdb';
 
 dotenv.config();
 
@@ -13,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//test connection with rethinkdb
-RethinDBConnection.connect();
+RethinDBConnection.createDatabaseIfNotExists();
+
 
 app.use('/', require('./routes/user.route'));
 

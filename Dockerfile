@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["npx", "nodemon", "-L", "src/index.ts"]
+CMD ["npx", "ts-node", "src/index.ts"]
