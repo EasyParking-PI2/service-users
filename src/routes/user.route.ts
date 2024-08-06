@@ -11,6 +11,6 @@ router.get('/api/user', protect, getUser);
 router.delete('/api/user', protect, deleteUser);
 
 router.post('/api/auth/login', login);
-router.get('/api/auth/verify', protect, verifyToken);
+router.get('/api/auth/verify', verifyToken);
 
 module.exports = router;

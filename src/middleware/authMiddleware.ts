@@ -16,6 +16,8 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
     if(!decoded) return res.status(401).send('Not authorized');
 
     const userModel = new UserModel();
+    console.log('request');
+    
     const user = await userModel.getById((decoded as any).userId);
     if(!user) return res.status(401).send('Not authorized');
 

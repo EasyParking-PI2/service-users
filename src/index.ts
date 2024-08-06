@@ -1,10 +1,8 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler';
 import RethinDBConnection from "./infra/RethinkDBConnection";
 import dotenv from 'dotenv';
-import protect from './middleware/authMiddleware';
-import CustomRequest from './types/CustomRequest.type';
 
 dotenv.config();
 
