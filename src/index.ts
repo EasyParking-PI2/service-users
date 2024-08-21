@@ -1,27 +1,30 @@
-import express from 'express';
-import cors from 'cors';
-import errorHandler from './middleware/errorHandler';
-import RethinDBConnection from "./infra/RethinkDBConnection";
-import dotenv from 'dotenv';
-import rethinkdb from 'rethinkdb';
+import cluster from 'cluster';
+import customExpress from './config/CustomExpress';
 
-dotenv.config();
+const app = customExpress();
 
-const app = express();
-const port = process.env.PORT || 3000;
+const numWorkers = 1;
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+if (cluster.isPrimary) {
+  console.log(`Primary ${process.pid} is running`);
 
-RethinDBConnection.connect();
-RethinDBConnection.createDatabaseIfNotExists();
+  for (let i = 0; i < numWorkers; i++) {
+    cluster.fork();
+  }
 
+  cluster.on('listening', function(worker){
+		console.log('cluster connected: '+worker.process.pid);
+	});
 
-app.use('/', require('./routes/user.route'));
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+} else {
+  const port = process.env.PORT || 3000;
 
-app.use(errorHandler);
+  app.listen(port, () => {
+    
+    console.log(`Server is running on port ${port}`);
+  });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-})
+}
